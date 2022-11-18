@@ -60,24 +60,46 @@ public class Comment extends DBConnection {
         return w_date;
     }
 
-    // 댓글 좋아요 추가
+    // 댓글 좋아요 추가 또는 삭제
     // input : 좋아요 누른 사람 id
     // output : 성공 : true, 실패 false
-    public boolean addCommentLike(int idx) {
+    public boolean CommentLike(int idx) {
         try {
-            String psql = "insert into comment_like(p_id, c_id, l_id) values (?, ?, ?)";
-            pstmt = con.prepareStatement(psql);
+            stmt = con.createStatement();
+            String sql = "select * from comment_like where p_id = " + this.p_id + " and c_id = "+ this.c_id + " and l_id = " + idx;
+            rs = stmt.executeQuery(sql);
 
-            pstmt.setInt(1, this.p_id);
-            pstmt.setInt(2, this.c_id);
-            pstmt.setInt(2, idx);
+            if(rs.next()) {
+                String psql = "delete from comment_like where p_id = ? and c_id = ? and l_id = ?";
+                pstmt = con.prepareStatement(psql);
 
-            int result = pstmt.executeUpdate();
+                pstmt.setInt(1, this.p_id);
+                pstmt.setInt(2, this.c_id);
+                pstmt.setInt(2, idx);
 
-            if(result > 0)
-                return true;
-            else
-                return false;
+                int result = pstmt.executeUpdate();
+
+                if (result > 0)
+                    return true;
+                else
+                    return false;
+            }
+
+            else {
+                String psql = "insert into comment_like(p_id, c_id, l_id) values (?, ?, ?)";
+                pstmt = con.prepareStatement(psql);
+
+                pstmt.setInt(1, this.p_id);
+                pstmt.setInt(2, this.c_id);
+                pstmt.setInt(2, idx);
+
+                int result = pstmt.executeUpdate();
+
+                if (result > 0)
+                    return true;
+                else
+                    return false;
+            }
 
         } catch(SQLException e) {
             e.printStackTrace();
@@ -85,6 +107,32 @@ public class Comment extends DBConnection {
         } finally {
             try {
                 if(pstmt != null && !pstmt.isClosed()) pstmt.close();
+                if(stmt != null && !stmt.isClosed()) stmt.close();
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 댓글 좋아요 여부 확인
+    // input : 확인할 유저 id
+    // output : 좋아요 한 경우 true, 안했거나 실패 false
+    public boolean isCommentLike(int idx) {
+        try {
+            stmt = con.createStatement();
+            String sql = "select * from comment_like where p_id = " + this.p_id + "and c_id = " + this.c_id + " and l_id = "+ idx;
+            rs = stmt.executeQuery(sql);
+
+            if(rs.next()) return true;
+
+            return false;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if(stmt != null && !stmt.isClosed()) stmt.close();
             } catch(SQLException e) {
                 e.printStackTrace();
             }

@@ -317,23 +317,69 @@ public class User extends DBConnection {
         }
     }
 
-    // 팔로우 추가
-    // input : 팔로우 할 사람 id
+    // 팔로우 추가 또는 삭제
+    // input : 팔로우 할 또는 취소 할 사람 id
     // output : 성공 : true, 실패 : false
-    public boolean addFollow(int following_id) {
+    public boolean follow(int following_id) {
         if(this.idx == -1)
             return false;
         try {
-            String psql = "insert into follow values (?, ?)";
-            pstmt = con.prepareStatement(psql);
+            stmt = con.createStatement();
+            String sql = "select * from follow where i_id = " + this.idx + " and following_id = "+following_id;
+            rs = stmt.executeQuery(sql);
 
-            pstmt.setInt(1, following_id);
-            pstmt.setInt(2, this.idx);
+            if(rs.next()) {
+                String psql = "delete from follow where i_id = ? and following_id = ?";
+                pstmt = con.prepareStatement(psql);
 
-            int result = pstmt.executeUpdate();
+                pstmt.setInt(1, this.idx);
+                pstmt.setInt(2, following_id);
 
-            if(result > 0)
-                return true;
+                int result = pstmt.executeUpdate();
+
+                if (result > 0)
+                    return true;
+
+                return false;
+            }
+            else {
+                String psql = "insert into follow values (?, ?)";
+                pstmt = con.prepareStatement(psql);
+
+                pstmt.setInt(1, following_id);
+                pstmt.setInt(2, this.idx);
+
+                int result = pstmt.executeUpdate();
+
+                if (result > 0)
+                    return true;
+
+                return false;
+            }
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if(pstmt != null && !pstmt.isClosed()) pstmt.close();
+                if(stmt != null && !stmt.isClosed()) stmt.close();
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 팔로우 여부 확인
+    // input : 확인할 유저 id
+    // output : 팔로우 한 경우 true, 안했거나 실패 false
+    public boolean isFollow(int following_id) {
+        try {
+            stmt = con.createStatement();
+            String sql = "select * from follow where i_id = " + this.idx + " and following_id = "+ following_id;
+            rs = stmt.executeQuery(sql);
+
+            if(rs.next()) return true;
 
             return false;
 
@@ -342,12 +388,13 @@ public class User extends DBConnection {
             return false;
         } finally {
             try {
-                if(pstmt != null && !pstmt.isClosed()) pstmt.close();
+                if(stmt != null && !stmt.isClosed()) stmt.close();
             } catch(SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     // 팔로워 목록 확인
     // input : void
