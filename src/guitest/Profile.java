@@ -10,10 +10,72 @@ import java.awt.event.ActionEvent;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
 
+class panel1 extends JPanel{
+	
+	private JButton imgBtn;
+	private JButton txtBtn;
+	private JButton likeBtn;
+	private JButton cmtBtn;
+	private JPanel imgPnl;
+	private JPanel txtPnl;
+	private JPanel btnPnl;
+	private ImageIcon postImg;
+	private ImageIcon likeImg;
+	private ImageIcon cmtImg;
+	private Dimension btnSize;
+	private JPanel likePnl;
+	private JPanel cmtPnl;
+	
+	public panel1() {
+		setLayout(new GridLayout(1, 3));
+		
+		btnSize = new Dimension(140,140);
+		
+		postImg = new ImageIcon("./image/post1.png");
+		imgBtn = new JButton();
+		imgBtn.setPreferredSize(btnSize);
+		imgBtn.setIcon(setImageSize(postImg,140,140));
+		imgPnl = new JPanel();
+		imgPnl.add(imgBtn);
+		add(imgPnl);
+		
+		txtBtn = new JButton("123123123");
+		txtBtn.setPreferredSize(btnSize);
+		txtPnl = new JPanel();
+		txtPnl.add(txtBtn);
+		add(txtPnl);
+		
+		likeImg = new ImageIcon("./image/like.png");
+		likeBtn = new JButton();
+		likeBtn.setPreferredSize(new Dimension(140,65));
+		likeBtn.setIcon(setImageSize(likeImg,50,50));
+		likePnl = new JPanel();
+		likePnl.add(likeBtn);
+		
+		cmtImg = new ImageIcon("./image/cmt.png");
+		cmtBtn = new JButton();
+		cmtBtn.setPreferredSize(new Dimension(140,65));
+		cmtBtn.setIcon(setImageSize(cmtImg,50,50));
+		cmtPnl = new JPanel();
+		cmtPnl.add(cmtBtn);
+		
+		btnPnl = new JPanel();
+		btnPnl.setLayout(new BoxLayout(btnPnl, BoxLayout.Y_AXIS));
+		btnPnl.add(likePnl);
+		btnPnl.add(cmtPnl);
+		add(btnPnl);
+	}
+	private static ImageIcon setImageSize(ImageIcon imgIcon, int i, int j) {
+		Image ximg = imgIcon.getImage();
+		Image yimg = ximg.getScaledInstance(i, j, java.awt.Image.SCALE_SMOOTH);
+		return new ImageIcon(yimg);
+	}
+}
+
 public class Profile extends JFrame {
 
 	private JPanel contentPane;
-
+	public panel1 panel01 = null;
 	/**
 	 * Launch the application.
 	 */
@@ -22,6 +84,7 @@ public class Profile extends JFrame {
 			public void run() {
 				try {
 					Profile frame = new Profile();
+
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -30,12 +93,10 @@ public class Profile extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Profile() {
+		super("userName profile");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 664, 496);
+		setBounds(100, 100, 680, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -60,6 +121,17 @@ public class Profile extends JFrame {
 		JButton joinIn = new JButton("Join-In");
 		right.add(joinIn);
 		
+		ImageIcon profile = new ImageIcon("./image/profile.png");
+		
+		JButton follower[] = new JButton[10];
+		for(int i=0;i<10;i++)
+		{
+			follower[i] = new JButton("follower"+ i);
+			follower[i].setIcon(setImageSize(profile,50,50));
+			right.add(follower[i]);
+		}
+		
+		
 		
 		JPanel left = new JPanel();
 		contentPane.add(left, BorderLayout.WEST);
@@ -69,84 +141,66 @@ public class Profile extends JFrame {
 		
 		JScrollPane center = new JScrollPane();
 		contentPane.add(center, BorderLayout.CENTER);
+		center.setPreferredSize(new Dimension(800,800));
 		
 		JPanel post_container = new JPanel();
 		center.setViewportView(post_container);
 		post_container.setLayout(new BoxLayout(post_container, BoxLayout.Y_AXIS));
 		
+		JPanel userPnl = new JPanel();
+		userPnl.setLayout(new GridLayout(1,3));
+		
+		Dimension btnSize = new Dimension(140,140);
+		
+		ImageIcon userImg = new ImageIcon("./image/profile.png");
+		JButton imgBtn = new JButton();
+		imgBtn.setPreferredSize(btnSize);
+		imgBtn.setIcon(setImageSize(userImg,140,140));
+		JPanel imgPnl = new JPanel();
+		imgPnl.add(imgBtn);
+		userPnl.add(imgPnl);
+		
+		JButton infoBtn = new JButton("123123");
+		infoBtn.setPreferredSize(btnSize);
+		JPanel infoPnl = new JPanel();
+		infoPnl.add(infoBtn);
+		userPnl.add(infoPnl);
+		
+		ImageIcon flwImg = new ImageIcon("./image/follow.jpg");
+		JButton flwBtn = new JButton();
+		flwBtn.setPreferredSize(btnSize);
+		flwBtn.setIcon(setImageSize(flwImg,100,100));
+		JPanel flwPnl = new JPanel();
+		flwPnl.add(flwBtn);
+		userPnl.add(flwPnl);
+		
+		JPanel example_post_panel = new JPanel();
+		example_post_panel.add(userPnl);
+		post_container.add(example_post_panel);
+		
+		
 		JPanel example_post_panel1 = new JPanel();
-		example_post_panel1.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null), null));
+		panel1 post_panel1 = null;
+		post_panel1 = new panel1();
+		example_post_panel1.add(post_panel1);
 		post_container.add(example_post_panel1);
-		example_post_panel1.setLayout(new GridLayout(1, 3));
-		
-		JPanel user_profile = new JPanel();
-		example_post_panel1.add(user_profile);
-		
-		ImageIcon profile = new ImageIcon("./image/profile.png");
-		JButton profileImage = new JButton();
-		profileImage.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		profileImage.setPreferredSize(new Dimension(150,150));
-		profileImage.setIcon(setImageSize(profile, 150, 150));
-		user_profile.add(profileImage);
-		
-		JPanel post_etc = new JPanel();
-		example_post_panel1.add(post_etc);
-		post_etc.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		String Str = new String("12345 1234123412341 234123451234123412341 2341234512341234 12341234123451234 12341234123 412345123412341 234123512341234 12341234512351234123412341234 2134123412351234123512 34123512341235123 412351234123512341 23512341251234");
-		String info = new String("<html><body>" + Str + "</body></html>");
-		
-		JLabel userInfo = new JLabel();
-		userInfo.setText(info);
-		userInfo.setVerticalAlignment(SwingConstants.TOP);
-		userInfo.setBorder(BorderFactory.createEmptyBorder(4,8,4,8));
-		userInfo.setPreferredSize(new Dimension(150, 150));
-		post_etc.add(userInfo);
-		JScrollPane scroll = new JScrollPane(userInfo);
-		post_etc.add(scroll);
-		
-		JPanel panel_2 = new JPanel();
-		example_post_panel1.add(panel_2);
-		
-		JButton follow = new JButton("10");
-		follow.setBackground(UIManager.getColor("CheckBox.light"));
-		follow.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		ImageIcon likeImg = new ImageIcon("./image/like.png");
-		panel_2.setLayout(new GridLayout(0, 1, 0, 0));
-		follow.setIcon(setImageSize(likeImg, 100, 100));
-		panel_2.add(follow);
-		
-		JButton add_comment = new JButton("5");
-		add_comment.setBackground(UIManager.getColor("CheckBox.light"));
-		add_comment.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		ImageIcon commentImg = new ImageIcon("./image/cmt.png");
-		add_comment.setIcon(setImageSize(commentImg, 100, 100));
-		panel_2.add(add_comment);
-
-		panel post1 = new panel();
-		JPanel example_post_panel2 = new JPanel();
-		post_container.add(example_post_panel2);
-
-//		example_post_panel2.add(post1);
 		
 		JPanel example_post_panel3 = new JPanel();
+		example_post_panel3.setPreferredSize(new Dimension(450,180));
 		post_container.add(example_post_panel3);
 		example_post_panel3.setLayout(new BoxLayout(example_post_panel3, BoxLayout.X_AXIS));
-	}
+		
+		JPanel example_post_panel4 = new JPanel();
+		example_post_panel4.setPreferredSize(new Dimension(450,180));
+		post_container.add(example_post_panel4);
+		example_post_panel4.setLayout(new BoxLayout(example_post_panel4, BoxLayout.X_AXIS));
 	
+	}
+
+
 	private static ImageIcon setImageSize(ImageIcon imgIcon, int i, int j) {
 		Image ximg = imgIcon.getImage();
 		Image yimg = ximg.getScaledInstance(i, j, java.awt.Image.SCALE_SMOOTH);
 		return new ImageIcon(yimg);
 	}
-
 }
